@@ -25,7 +25,6 @@ validacion_csv(){
         fi
     done < "$INPUT_FILE"
 
-    # Reporta el resultado final de la validación
     if [ "$cont_advertencia" -gt 0 ]; then
         echo "Error: Se encontraron ${cont_advertencia} errores de formato en el CSV. Abortando."
         exit 1
@@ -49,6 +48,20 @@ procesar_csv() {
     done < "$INPUT_FILE"
 }
 
+generar_grafo(){
+    echo "--- Iniciando fase de generación de grafo ---"
+
+    local grafo_output="out/preview.grafo.dot"
+
+    echo "Generadno archivo de visualización en '${grafo_output}'..."
+    {
+        echo "digraph DNS {"
+        awk '{print "\"" $1 "\" -> \"" $2 "\";"}' "$OUTPUT_FILE"
+        echo "}"
+    } > "$grafo_output"
+ }
+
+
 main(){
    
     echo "Iniciando el script para parsear el CSV"
@@ -60,6 +73,7 @@ main(){
 
     validacion_csv
     procesar_csv
+    generar_grafo
 
     echo "Proceso completado. El resultado está en '$OUTPUT_FILE'."
         

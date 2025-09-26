@@ -16,3 +16,72 @@ export DNS_SERVER="8.8.8.8"
 
 # Se ejecuta el script desde la raíz del proyecto
 ./src/resolve.sh
+```
+
+---
+# Rama: feature/grafo-dns-Poma_Walter
+**Responsable:** Poma Navarro Walter Bryan
+**Fecha:** 26 de septiembre de 2025
+
+## 1. Resumen del Sprint
+
+El objetivo de este primer sprint fue desarrollar la base para el analizador de dependencias DNS. En esta parte me centré en crear un script en Bash (`parse-csv.sh`) capaz de leer y validar un archivo CSV con registros DNS (`dns-resolved.csv`) para transformarlo en una lista de conexiones (`edge-list.txt`), que servirá para el análisis del grafo en el siguiente sprint.
+
+## 2. Comandos y Evidencias
+
+A continuación, se muestran los comandos clave ejecutados y las evidencias de los archivos generados.
+
+### 2.1. Ejecución de Scripts
+
+Se exportaron las variables de entorno necesarias y se ejecutaron los scripts en secuencia para generar los artefactos de salida.
+
+```bash
+# Exportación de variables de entorno
+export DOMAINS_FILE="config/domains.txt"
+export DNS_SERVER="8.8.8.8"
+
+# Ejecución del script que resuelve los DNS
+./src/resolve.sh
+
+# Ejecución de mi script de parseo y validación
+./src/parse-csv.sh
+```
+
+### 2.2. Evidencia de Salidas
+
+Los scripts generaron los siguientes archivos en el directorio out/.
+
+**`out/dns-resolved.csv` (Fragmento):**
+```csv
+github.com,A,140.82.113.4,60
+google.com,A,64.233.186.100,211
+google.com,A,64.233.186.101,211
+```
+
+**`out/edge-list.txt` (Fragmento):**
+```
+github.com 140.82.113.4
+google.com 64.233.186.100
+google.com 64.233.186.101
+```
+
+**`out/preview.grafo.dot` (Fragmento):**
+```
+digraph DNS {
+"github.com" -> "140.82.113.4";
+"google.com" -> "64.233.186.100";
+"google.com" -> "64.233.186.101";
+```
+
+## 3. Decisiones Técnicas Clave
+
+Durante el desarrollo se tomaron varias decisiones importantes para asegurar la robustez y calidad del script.
+
+1.  **Manejo de Errores en CSV de Entrada:** Se detectó que una versión inicial del script `resolve.sh` generaba un CSV con formato anómalo (columna de destino vacía y TTL en la posición incorrecta). Se decidió aplicar una l´+ogica defensiva donde se tiene un PREVALIDACION de CSV antes de hacer conexiones.
+
+2.  **Refactorización a Múltiples Fases:** Inicialmente, la validación y el procesamiento estaban mezclados. Se refactorizó el script para separarlos en dos funciones distintas: `validacion_csv` y `procesar_csv`. Esta estructura permite primero verificar la integridad de todo el archivo de entrada y emitir un único mensaje de "Validación OK", y solo después, si no hay errores, proceder con el procesamiento. Esto hace el código más limpio, modular y fácil de mantener.
+
+3.  **Modularización de la Generación del Grafo:** Siguiendo las buenas prácticas, la lógica para generar el archivo `.dot` para Graphviz se extrajo a su propia función (`generar_grafo`).
+
+---
+
