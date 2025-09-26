@@ -6,30 +6,14 @@ set -euo pipefail
 INPUT_FILE="out/dns-resolved.csv"
 OUTPUT_FILE="out/edge-list.txt"
 
-local cont_advertencia=0
 ## --- Sección para luego implementar el script--- 
-main(){
-
-    echo "Iniciando el script para parsear el CSV"
-
-    if [ ! -f "$INPUT_FILE" ]; then
-        echo "Error el archivo de entrada '$INPUT_FILE' no existe."
-        exit 1
-    fi
-
-    #Borrando el archivo de salida si es que ya existe
-
-    > "$OUTPUT_FILE"
-
+validacion_csv(){
+    echo "--- Iniciando Fase de Validación del CSV ---"
+    local cont_advertencia=0
+    
     while IFS=',' read -r origen tipo destino ttl; do
-        if [ -z "$destino" ] && [ -n "$ttl" ]; then
-            echo "Advertencia: Corregido formato anómalo para el dominio '$origen'."
-            destino="$ttl"
-            ttl="0"
-        fi
-
         if [ -z "$origen" ] || [ -z "$tipo" ] || [ -z "$destino" ] || [ -z "$ttl" ]; then
-            echo "Advertencia: Línea con formato incompleto (no tiene 4 columnas). Se omitirá."
+            echo "Advertencia: Línea con formato incompleto. Se omitirá."
             ((cont_advertencia++))
             continue  
         fi
@@ -39,16 +23,43 @@ main(){
             ((cont_advertencia++))
             continue
         fi
-
-        echo "$origen $destino" >> "$OUTPUT_FILE"
-    
     done < "$INPUT_FILE"
 
-    if [ "$cont_advertencia" -eq 0 ]; then
-        echo "Validación OK"
-    else 
-        echo "Validación OK: Se encontró ${cont_advertencia}"
+    # Reporta el resultado final de la validación
+    if [ "$cont_advertencia" -gt 0 ]; then
+        echo "Error: Se encontraron ${cont_advertencia} errores de formato en el CSV. Abortando."
+        exit 1
     fi
+
+    # Imprime el mensaje una sola vez si todo está correcto
+    echo "Validación CSV OK. El formato es correcto."
+}
+
+procesar_csv() {
+    echo "--- Iniciando Fase de Procesamiento y Conectividad ---"
+    > "$OUTPUT_FILE"
+
+    while IFS=',' read -r origen tipo destino ttl; do
+        echo "$origen $destino" >> "$OUTPUT_FILE"
+
+        if [[ "$tipo" == "A" ]]; then
+            echo "-> [TEST] Probando conectividad a la IP $destino (Puerto 443)..."
+            nc -zvw1 "$destino" 443 || true
+        fi
+    done < "$INPUT_FILE"
+}
+
+main(){
+   
+    echo "Iniciando el script para parsear el CSV"
+
+    if [ ! -f "$INPUT_FILE" ]; then
+        echo "Error el archivo de entrada '$INPUT_FILE' no existe."
+        exit 1
+    fi
+
+    validacion_csv
+    procesar_csv
 
     echo "Proceso completado. El resultado está en '$OUTPUT_FILE'."
         
