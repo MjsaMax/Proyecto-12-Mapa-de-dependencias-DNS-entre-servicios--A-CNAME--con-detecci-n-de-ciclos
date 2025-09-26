@@ -12,8 +12,9 @@ resolve_domains() {
       continue
     fi
 
-    dig @"${DNS_SERVER}" +short +ttl "$domain" A | awk -v d="$domain" '{print d ",A," $4 "," $1}'
-    dig @"${DNS_SERVER}" +short +ttl "$domain" CNAME | awk -v d="$domain" '{print d ",CNAME," $4 "," $1}'
+    dig @"${DNS_SERVER}" +noall +answer "$domain" A | awk -v d="$domain" '{print d "," $4 "," $5 "," $2}'
+    
+    dig @"${DNS_SERVER}" +noall +answer "$domain" CNAME | awk -v d="$domain" '{print d "," $4 "," $5 "," $2}'
 
   done < "${DOMAINS_FILE}"
 }
@@ -21,3 +22,4 @@ resolve_domains() {
 mkdir -p out
 resolve_domains | sort | uniq > out/dns-resolved.csv
 echo "Proceso completado. Resultados en out/dns-resolved.csv"
+
