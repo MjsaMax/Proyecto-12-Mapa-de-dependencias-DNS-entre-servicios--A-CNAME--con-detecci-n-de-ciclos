@@ -6,6 +6,7 @@ set -euo pipefail
 INPUT_FILE="out/dns-resolved.csv"
 OUTPUT_FILE="out/edge-list.txt"
 
+local cont_advertencia=0
 ## --- Sección para luego implementar el script--- 
 main(){
 
@@ -29,22 +30,25 @@ main(){
 
         if [ -z "$origen" ] || [ -z "$tipo" ] || [ -z "$destino" ] || [ -z "$ttl" ]; then
             echo "Advertencia: Línea con formato incompleto (no tiene 4 columnas). Se omitirá."
+            ((cont_advertencia++))
             continue  
         fi
 
         if ! [[ "$ttl" =~ ^[0-9]+$ ]]; then
             echo "Advertencia: TTL no numérico ('$ttl') en la línea para '$origen'. Se omitirá."
+            ((cont_advertencia++))
             continue
         fi
 
-        if [ -z "$origen" ] || [ -z "$destino" ]; then
-            echo "Advertencia: Línea con formato incorrecto."
-            continue  
-        fi    
-        
         echo "$origen $destino" >> "$OUTPUT_FILE"
     
     done < "$INPUT_FILE"
+
+    if [ "$cont_advertencia" -eq 0 ]; then
+        echo "Validación OK"
+    else 
+        echo "Validación OK: Se encontró ${cont_advertencia}"
+    fi
 
     echo "Proceso completado. El resultado está en '$OUTPUT_FILE'."
         
