@@ -1,0 +1,5 @@
+ejemplo.com,CNAME,proxy.ejemplo.net,3600
+proxy.ejemplo.net,A,192.168.1.10,300
+otrodominio.com,A,10.0.0.5,600
+ciclo1.com,CNAME,ciclo2.com,1800
+ciclo2.com,CNAME,ciclo1.com,1800
