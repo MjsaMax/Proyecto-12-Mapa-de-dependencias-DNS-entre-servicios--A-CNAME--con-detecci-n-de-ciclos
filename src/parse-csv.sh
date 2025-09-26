@@ -26,10 +26,22 @@ main(){
             destino="$ttl"
             ttl="0"
         fi
+
+        if [ -z "$origen" ] || [ -z "$tipo" ] || [ -z "$destino" ] || [ -z "$ttl" ]; then
+            echo "Advertencia: Línea con formato incompleto (no tiene 4 columnas). Se omitirá."
+            continue  
+        fi
+
+        if ! [[ "$ttl" =~ ^[0-9]+$ ]]; then
+            echo "Advertencia: TTL no numérico ('$ttl') en la línea para '$origen'. Se omitirá."
+            continue
+        fi
+
         if [ -z "$origen" ] || [ -z "$destino" ]; then
             echo "Advertencia: Línea con formato incorrecto."
             continue  
         fi    
+        
         echo "$origen $destino" >> "$OUTPUT_FILE"
     
     done < "$INPUT_FILE"
