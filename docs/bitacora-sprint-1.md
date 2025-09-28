@@ -73,6 +73,20 @@ digraph DNS {
 "google.com" -> "64.233.186.101";
 ```
 
+### 2.3 Pruebas Automatizadas con Bats
+
+Para garantizar la calidad y el correcto funcionamiento del script parse-csv.sh, se implementó una suite de pruebas automatizada utilizando el framework Bats.
+
+Se creó el archivo `tests/test_parse_csv.bats`. Cada prueba se ejecuta en un entorno limpio y aislado gracias a las funciones `setup` (que crea un directorio temporal) y `teardown` (que lo elimina al finalizar).
+
+Los casos de prueba se diseñaron siguiendo el patrón **Arrange-Act-Assert (AAA)** para asegurar que cada prueba fuera clara y precisa en su propósito.
+
+La suite de pruebas valida los siguientes comportamientos clave del script:
+    * **Caso de Éxito:** Verifica que un archivo CSV válido es procesado correctamente, generando los artefactos de salida (`edge-list.txt`, `preview.grafo.dot`) con el contenido esperado y finalizando con un código de estado `0`.
+    * **Casos de Error:** Se comprueba que el script aborta con un código de estado `1` y muestra el mensaje de error adecuado cuando la entrada es inválida (ej. un TTL no numérico o una línea con campos incompletos).
+
+Esta implementación satisface el requisito del Sprint 1 de desarrollar una prueba Bats representativa, validando tanto el flujo de éxito como el manejo de fallos.
+
 ## 3. Decisiones Técnicas Clave
 
 Durante el desarrollo se tomaron varias decisiones importantes para asegurar la robustez y calidad del script.
@@ -83,5 +97,9 @@ Durante el desarrollo se tomaron varias decisiones importantes para asegurar la 
 
 3.  **Modularización de la Generación del Grafo:** Siguiendo las buenas prácticas, la lógica para generar el archivo `.dot` para Graphviz se extrajo a su propia función (`generar_grafo`).
 
+
+
 ---
+
+
 
