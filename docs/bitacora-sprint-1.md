@@ -100,6 +100,57 @@ Durante el desarrollo se tomaron varias decisiones importantes para asegurar la 
 
 
 ---
+# Rama: feature/automation-Serrano-Max
+**Responsable:** Serrano Arostegui Max Jairo
+**Fecha:** 28 de septiembre de 2025
+
+# 1. Resumen del Sprint
+En este Sprint se ha implementado el Makefile con los targets principales: build,run,test,help,clean,tools.
+# 2. Evidencias
+Ejecuciones:
+```bash
+make help
+Make targets:
+  help                    Mostrar los targets disponibles
+  tools                   Verificar e instalar herramientas necesarias
+  build                   Construir el proyecto
+  test                    Ejecutar pruebas
+  run                     Ejecutar la aplicación
+  clean                   Limpiar archivos
+```
+```bash
+make build
+Dando permisos de ejecución...
+Permisos dados.
+```
+```bash
+make tools
+Verificando herramientas necesarias...
+[OK] dig ya está instalado
+[OK] curl ya está instalado
+[OK] ss ya está instalado
+[OK] nc ya está instalado
+[OK] bats ya está instalado
+Todas las herramientas verificadas.
+```
+```bash
+make test
+Ejecutando pruebas...
+test_parse_csv.bats
+ ✓ Debe procesar un CSV válido y generar un edge-list correcto + DOT
+ ✓ Debe abortar con código de error 1 si el CSV tiene TTL no numérico
+ ✓ Debe abortar con código de error 1 si falta un campo (por ejemplo TTL vacío)
+
+3 tests, 0 failures
+```
+```bash
+make run
+Ejecutando la aplicación...
+```
+```bash
+make clean
+Limpiando archivos generados...
+```
 
 
 
