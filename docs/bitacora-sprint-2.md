@@ -66,3 +66,76 @@ export DNS_SERVER="8.8.8.8"
 ## 4. Decisiones Técnicas
 Se decidió enviar los logs a `stderr` para mantener los archivos de datos (`stdout`) completamente limpios y puros, facilitando su procesamiento por otras herramientas.
 Se eligió `nc -zv` para la verificación de puertos por ser una herramienta no interactiva, rápida y estándar en sistemas Unix.
+
+---
+# Bitácora Sprint 2 - Rama: feature/grafo-dns
+
+**responsable:** Poma Navarro, Walter Bryan
+**Fecha:** 30 de septiembre de 2025
+
+## 1. Objetivo del Sprint
+
+El objetivo del sprint2 para la rama de grafo-dns fue evolucionar el script del sprint1 para que, además de procesar los datos, pudiera realizar un análisis estructural del grafo de dependencias DNS. Las metas principales fueron implementar la detección de ciclos de CNAMEs, calcular la profundidad máxima de las cadenas de resolución y exportar estas métricas.
+
+## 2. Cambios y Nuevas Funcionalidades
+
+El cambio más grande que hicimos fue la adapta el script al nuevo formato de entrada JSON, que reemplazó al CSV.
+
+* Se refactorizaron las funciones de validación y procesamiento para usar la herramienta `jq` para parsear cada línea.
+
+* Las validaciones ahora comprueban la presencia de claves (`has("key")`) y el tipo de dato (`test("regex")`) en lugar de contar columnas.
+
+Se optimizó el script para leer el archivo de entrada una sola vez. Ya con esta lectura se construye el grafo en memoria utilizando un array asociativo de Bash, lo que permite un análisis posterior mucho más eficiente.
+
+Añadí la función `analizar_grafo`, que implementa el algoritmo de DFS para cumplir con los requisitos de análisis:
+* Detección de Ciclos:El algoritmo recorre cada cadena de dependencias y mantiene un registro de la "ruta actual". Si un nodo se vuelve a encontrar en su propia ruta, se reporta un ciclo.
+* Cálculo de Profundidad Máxima: Durante el recorrido de cada cadena, se cuenta el número de "saltos".
+
+Se creó la función `imprime_metricas` para mostrar en la consola un resumen con los resultados del análisis.
+
+Se modificó las pruebas bats para que estén de acuerdo al formato JSON.
+
+## 3. Comandos y Evidencias
+
+### 3.1. Ejecución del Flujo Completo
+```bash
+# 1. Ejecutar el script de resolve-dns
+export DOMAINS_FILE="config/domains.txt"
+export DNS_SERVER="8.8.8.8"
+./src/resolve.sh > out/dns-resolved.json 2> out/sprint2.log
+
+# 2. Ejecutar mi script de análisis
+./src/analizar-grafo.sh
+```
+
+Salida:
+```bash
+Iniciando el script para analizar el JSON de DNS
+--- Iniciando Fase de Validación y Construcción del Grafo ---
+Validación y construcción del grafo OK.
+--- Iniciando Fase de Análisis del Grafo ---
+--- Iniciando fase de generación de grafo ---
+Generando archivo de visualización en 'out/preview.grafo.dot'...
+--- Exportando Métricas del Análisis ---
+Número de nodos: 3
+Ciclos detectados: 0
+Profundidad máxima: 1
+Proceso completado. El resultado está en 'out/edge-list.txt'.
+```
+
+### 3.2. Ejecución de las pruebas bats
+```bash
+# 1. Ejecutar pruebas bats
+bats ./tests/test_analizar_grafo.bats 
+```
+
+Salida:
+```bash
+ ✓ Debe procesar un JSON válido y generar un edge-list correcto + DOT
+ ✓ Debe abortar con código de error 1 si el JSON tiene TTL no numérico
+ ✓ Debe abortar con código de error 1 si falta un campo (por ejemplo TTL vacío)
+
+3 tests, 0 failures
+```
+
+---
