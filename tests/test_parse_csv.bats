@@ -6,7 +6,7 @@ setup() {
   mkdir -p "${BATS_TMPDIR}/src"
 
   cp ./src/parse-csv.sh "${BATS_TMPDIR}/src/"
-  chmod +x "${BATS_TMPDIR}/src/parse-csv.sh"
+  chmod +x "${BATS_TMPDIR}/src/analizar-grafo.sh"
 }
 
 teardown() {
@@ -21,13 +21,13 @@ print_debug() {
   echo "-----------------"
 }
 
-@test "Debe procesar un CSV válido y generar un edge-list correcto + DOT" {
-  cat > "${BATS_TMPDIR}/out/dns-resolved.csv" <<EOF
-github.com,A,20.205.243.166,60
-google.com,A,142.250.78.46,300
+@test "Debe procesar un JSON válido y generar un edge-list correcto + DOT" {
+  cat > "${BATS_TMPDIR}/out/dns-resolved.json" <<EOF
+{"domain": "github.com", "type": "A", "value": "20.205.243.166", "ttl": "60"}
+{"domain": "google.com", "type": "A", "value": "142.250.78.46", "ttl": "300"}
 EOF
 
-  run bash -c "cd '${BATS_TMPDIR}' && ./src/parse-csv.sh"
+  run bash -c "cd '${BATS_TMPDIR}' && ./src/analizar-grafo.sh"
 
   if [ "$status" -ne 0 ]; then
     print_debug
@@ -47,11 +47,11 @@ google.com 142.250.78.46"
 }
 
 @test "Debe abortar con código de error 1 si el CSV tiene TTL no numérico" {
-  cat > "${BATS_TMPDIR}/out/dns-resolved.csv" <<EOF
-github.com,A,20.205.243.166,sesenta
+  cat > "${BATS_TMPDIR}/out/dns-resolved.json" <<EOF
+{"domain": "github.com", "type": "A", "value": "20.205.243.166", "ttl": "sesenta"}
 EOF
 
-  run bash -c "cd '${BATS_TMPDIR}' && ./src/parse-csv.sh 2>&1"
+  run bash -c "cd '${BATS_TMPDIR}' && ./src/analizar-grafo.sh 2>&1"
 
   if [ "$status" -eq 0 ]; then
     print_debug
@@ -66,7 +66,7 @@ EOF
 example.com,A,93.184.216.34,
 EOF
 
-  run bash -c "cd '${BATS_TMPDIR}' && ./src/parse-csv.sh 2>&1"
+  run bash -c "cd '${BATS_TMPDIR}' && ./src/analizar-grafo.sh 2>&1"
 
   if [ "$status" -eq 0 ]; then
     print_debug

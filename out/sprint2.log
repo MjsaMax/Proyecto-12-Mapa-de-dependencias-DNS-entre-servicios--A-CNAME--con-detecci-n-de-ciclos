@@ -1,0 +1,24 @@
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Usando archivo de dominios: config/domains.txt"}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Usando servidor DNS: 8.8.8.8"}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Procesando dominio: google.com"}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Resolución A para google.com exitosa en intento 1."}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.102 en el puerto 80."}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.102 en el puerto 443."}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.113 en el puerto 80."}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.113 en el puerto 443."}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.101 en el puerto 80."}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.101 en el puerto 443."}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.139 en el puerto 80."}
+{"timestamp": "2025-09-30 19:24:00", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.139 en el puerto 443."}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.138 en el puerto 80."}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.138 en el puerto 443."}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.100 en el puerto 80."}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.100 en el puerto 443."}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Procesando dominio: github.com"}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Resolución A para github.com exitosa en intento 1."}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Conectividad exitosa con 140.82.113.4 en el puerto 80."}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Conectividad exitosa con 140.82.113.4 en el puerto 443."}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Procesando dominio: wikipedia.org"}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Resolución A para wikipedia.org exitosa en intento 1."}
+{"timestamp": "2025-09-30 19:24:01", "level": "INFO", "message": "Conectividad exitosa con 195.200.68.224 en el puerto 80."}
+{"timestamp": "2025-09-30 19:24:02", "level": "INFO", "message": "Conectividad exitosa con 195.200.68.224 en el puerto 443."}
