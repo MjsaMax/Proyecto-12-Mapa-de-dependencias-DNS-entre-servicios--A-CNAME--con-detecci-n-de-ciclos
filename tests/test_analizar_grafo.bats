@@ -5,12 +5,16 @@ setup() {
   mkdir -p "${BATS_TMPDIR}/out"
   mkdir -p "${BATS_TMPDIR}/src"
 
-  cp ./src/parse-csv.sh "${BATS_TMPDIR}/src/"
+  cp ./src/analizar-grafo.sh "${BATS_TMPDIR}/src/"
   chmod +x "${BATS_TMPDIR}/src/analizar-grafo.sh"
 }
 
 teardown() {
   rm -rf "$BATS_TMPDIR"
+}
+
+require_jq() {
+  command -v jq >/dev/null 2>&1 || skip "Se requiere 'jq' para estas pruebas"
 }
 
 print_debug() {
@@ -22,6 +26,8 @@ print_debug() {
 }
 
 @test "Debe procesar un JSON válido y generar un edge-list correcto + DOT" {
+    require_jq
+
   cat > "${BATS_TMPDIR}/out/dns-resolved.json" <<EOF
 {"domain": "github.com", "type": "A", "value": "20.205.243.166", "ttl": "60"}
 {"domain": "google.com", "type": "A", "value": "142.250.78.46", "ttl": "300"}
@@ -46,7 +52,8 @@ google.com 142.250.78.46"
   [[ "$DOT_CONTENT" == *"\"google.com\" -> \"142.250.78.46\";"* ]]
 }
 
-@test "Debe abortar con código de error 1 si el CSV tiene TTL no numérico" {
+@test "Debe abortar con código de error 1 si el JSON tiene TTL no numérico" {
+  require_jq
   cat > "${BATS_TMPDIR}/out/dns-resolved.json" <<EOF
 {"domain": "github.com", "type": "A", "value": "20.205.243.166", "ttl": "sesenta"}
 EOF
@@ -58,12 +65,13 @@ EOF
   fi
   [ "$status" -eq 1 ]
 
-  [[ "${output}" == *"errores de formato en el CSV. Abortando."* ]]
+  [[ "${output}" == *"errores de formato en el JSON. Abortando."* ]]
 }
 
 @test "Debe abortar con código de error 1 si falta un campo (por ejemplo TTL vacío)" {
-  cat > "${BATS_TMPDIR}/out/dns-resolved.csv" <<EOF
-example.com,A,93.184.216.34,
+  require_jq
+  cat > "${BATS_TMPDIR}/out/dns-resolved.json" <<EOF
+{"domain": "example.com", "type": "A", "value": "93.184.216.34"}
 EOF
 
   run bash -c "cd '${BATS_TMPDIR}' && ./src/analizar-grafo.sh 2>&1"
@@ -73,5 +81,5 @@ EOF
   fi
   [ "$status" -eq 1 ]
 
-  [[ "${output}" == *"errores de formato en el CSV. Abortando."* ]]
+  [[ "${output}" == *"errores de formato en el JSON. Abortando."* ]]
 }
