@@ -108,6 +108,16 @@ generar_grafo() {
   } > "$GRAFO_OUTPUT"
 }
 
+# Limpieza por interrupcion
+cleanup() {
+  echo "[INTERRUPCION] Interrupcion detectada. Limpiando..."
+  rm -f "$OUTPUT_FILE" "$GRAFO_OUTPUT" 2>/dev/null || true
+  exit 0
+}
+
+#Detecta señales de interrupcion y ejecuta cleanup
+trap cleanup SIGINT SIGTERM SIGQUIT
+
 main() {
   echo "Iniciando el script para analizar el JSON de DNS"
 
