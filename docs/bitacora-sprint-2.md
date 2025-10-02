@@ -139,3 +139,63 @@ Salida:
 ```
 
 ---
+
+# Bitácora Sprint 2 - Rama: feature/automation-Serrano-Max
+
+**Responsable:** Max Serrano
+**Fecha:** 1 de octubre de 2025
+
+# Objetivos
+En este sprint lo que se realizó por mi parte fue agregar robustez al test usando bats,
+se generan [CASO-POSITIVO] ,2 [CASO-NEGATIVO], un [CASO-TIMEOUT] y 2 [METRICA].
+Se agrego al script analizar-grafo.sh una salida de trap con se señales SIGTERM, SIGINT y SIGQUIT.
+
+# Cambios:
+
+- [CASO-POSITIVO] resolve.sh resuelve dominios reales y genera JSON válido
+- [CASO-NEGATIVO] resolve.sh maneja NXDOMAIN sin crashear
+- [CASO-NEGATIVO] Conectividad falla correctamente en puertos cerrados
+- [CASO-TIMEOUT] analizar-grafo.sh detecta ciclos sin loop infinito
+- [METRICA] Falla si se detectan ciclos (threshold: ciclos > 0)
+- [METRICA] Pasa si NO hay ciclos (threshold: ciclos == 0)
+
+Se agrego trap en analizar-grafo.sh:
+
+```
+# Limpia 
+cleanup() {
+  echo "[INTERRUPCION] Interrupcion detectada. Limpiando..."
+  rm -f "$OUTPUT_FILE" "$GRAFO_OUTPUT" 2>/dev/null || true
+  exit 0
+}
+#Detecta señales de interrupcion {SIGINT SIGTERM SIGQUIT} y ejecuta cleanup
+trap cleanup SIGINT SIGTERM SIGQUIT
+```
+# Ejecuciones
+
+bats:
+```bash
+ax--@PP:~/Proyectos/Proyecto-13-Evaluador-de-resiliencia-de-endpoints-con-reintentos-y-jitter-controlado$ bats tests/test_analizar_grafo.bats 
+test_analizar_grafo.bats
+ ✓ Debe procesar un JSON válido y generar un edge-list correcto + DOT
+ ✓ Debe abortar con código de error 1 si el JSON tiene TTL no numérico
+ ✓ Debe abortar con código de error 1 si falta un campo (por ejemplo TTL vacío)
+ ✓ [CASO-POSITIVO] resolve.sh resuelve dominios reales y genera JSON válido
+ ✓ [CASO-NEGATIVO] resolve.sh maneja NXDOMAIN sin crashear
+ ✓ [CASO-NEGATIVO] Conectividad falla correctamente en puertos cerrados
+ ✓ [CASO-TIMEOUT] analizar-grafo.sh detecta ciclos sin loop infinito
+ ✓ [METRICA] Falla si se detectan ciclos (threshold: ciclos > 0)
+ ✓ [METRICA] Pasa si NO hay ciclos (threshold: ciclos == 0)
+
+9 tests, 0 failures
+```
+analizar-grafo.sh:
+
+Interrupción por `Ctrl + C`:
+
+```bash
+ax--@PP:~/Proyectos/Proyecto-13-Evaluador-de-resiliencia-de-endpoints-con-reintentos-y-jitter-controlado$ ./src/analizar-grafo.sh 
+Iniciando el script para analizar el JSON de DNS
+--- Iniciando Fase de Validación y Construcción del Grafo ---
+^C[INTERRUPCION] Interrupcion detectada. Limpiando...
+```
