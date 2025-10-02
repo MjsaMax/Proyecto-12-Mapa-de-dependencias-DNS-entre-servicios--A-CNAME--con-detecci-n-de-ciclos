@@ -23,16 +23,26 @@ tools: ## Verificar e instalar herramientas necesarias
 
 build: ## Construir el proyecto
 	@echo "Dando permisos de ejecución..."
-	@chmod +x ./tests/test_parse_csv.bats
+	@chmod +x ./tests/test_analizar_grafo.bats
+	@chmod +x ./src/analizar-grafo.sh
+	@chmod +x ./src/resolve.sh
 	@echo "Permisos dados."
 
 test: ## Ejecutar pruebas
 	@echo "Ejecutando pruebas..."
-	@./tests/test_parse_csv.bats
+	@./tests/test_analizar_grafo.bats
 
 run: ## Ejecutar la aplicación
 	@echo "Ejecutando la aplicación..."
+	@export DOMAINS_FILE="config/domains.txt"
+	@export DNS_SERVER="8.8.8.8"
+	@./src/resolve.sh
+	@./src/analizar-grafo.sh
+	
 
 clean: ## Limpiar archivos
 	@echo "Limpiando archivos generados..."
+	@rm out/dns-resolved.json
+	@rm out/edge-list.txt
+	@rm out/preview.grafo.dot
 	
