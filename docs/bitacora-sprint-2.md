@@ -27,41 +27,30 @@ export DNS_SERVER="8.8.8.8"
 ```
 **Ejemplo de Salida de Datos (out/dns-resolved.json):**
 ```bash
-{"domain": "google.com", "type": "A", "value": "172.217.192.101", "ttl": "35"}
-{"domain": "google.com", "type": "A", "value": "172.217.192.138", "ttl": "35"}
-{"domain": "google.com", "type": "A", "value": "172.217.192.100", "ttl": "35"}
-{"domain": "google.com", "type": "A", "value": "172.217.192.102", "ttl": "35"}
-{"domain": "google.com", "type": "A", "value": "172.217.192.139", "ttl": "35"}
-{"domain": "google.com", "type": "A", "value": "172.217.192.113", "ttl": "35"}
-{"domain": "github.com", "type": "A", "value": "140.82.112.3", "ttl": "60"}
-{"domain": "wikipedia.org", "type": "A", "value": "195.200.68.224", "ttl": "54"}
+{"domain": "www.microsoft.com", "type": "CNAME", "value": "www.microsoft.com-c-3.edgekey.net", "ttl": "1639"}
+{"domain": "www.microsoft.com-c-3.edgekey.net", "type": "CNAME", "value": "www.microsoft.com-c-3.edgekey.net.globalredir.akadns.net", "ttl": "336"}
+{"domain": "www.microsoft.com-c-3.edgekey.net.globalredir.akadns.net", "type": "CNAME", "value": "e13678.dscb.akamaiedge.net", "ttl": "900"}
+{"domain": "e13678.dscb.akamaiedge.net", "type": "A", "value": "23.57.122.86", "ttl": "20"}
+{"domain": "www.amazon.com", "type": "CNAME", "value": "tp.47cf2c8c9-frontier.amazon.com", "ttl": "730"}
+{"domain": "tp.47cf2c8c9-frontier.amazon.com", "type": "CNAME", "value": "d3ag4hukkh62yn.cloudfront.net", "ttl": "60"}
+{"domain": "d3ag4hukkh62yn.cloudfront.net", "type": "A", "value": "108.158.105.160", "ttl": "60"}
+{"domain": "blog.hubspot.com", "type": "A", "value": "172.64.154.108", "ttl": "300"}
+{"domain": "blog.hubspot.com", "type": "A", "value": "104.18.33.148", "ttl": "300"}
 ```
 **Ejemplo de Salida de Logs (out/sprint2.log):**
 ```bash
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Usando archivo de dominios: config/domains.txt"}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Usando servidor DNS: 8.8.8.8"}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Procesando dominio: google.com"}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Resolución A para google.com exitosa en intento 1."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.101 en el puerto 80."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.101 en el puerto 443."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.138 en el puerto 80."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.138 en el puerto 443."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.100 en el puerto 80."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.100 en el puerto 443."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.102 en el puerto 80."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.102 en el puerto 443."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.139 en el puerto 80."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.139 en el puerto 443."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.113 en el puerto 80."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Conectividad exitosa con 172.217.192.113 en el puerto 443."}
-{"timestamp": "2025-09-30 12:31:47", "level": "INFO", "message": "Procesando dominio: github.com"}
-{"timestamp": "2025-09-30 12:31:48", "level": "INFO", "message": "Resolución A para github.com exitosa en intento 1."}
-{"timestamp": "2025-09-30 12:31:48", "level": "INFO", "message": "Conectividad exitosa con 140.82.112.3 en el puerto 80."}
-{"timestamp": "2025-09-30 12:31:48", "level": "INFO", "message": "Conectividad exitosa con 140.82.112.3 en el puerto 443."}
-{"timestamp": "2025-09-30 12:31:48", "level": "INFO", "message": "Procesando dominio: wikipedia.org"}
-{"timestamp": "2025-09-30 12:31:48", "level": "INFO", "message": "Resolución A para wikipedia.org exitosa en intento 1."}
-{"timestamp": "2025-09-30 12:31:48", "level": "INFO", "message": "Conectividad exitosa con 195.200.68.224 en el puerto 80."}
-{"timestamp": "2025-09-30 12:31:49", "level": "INFO", "message": "Conectividad exitosa con 195.200.68.224 en el puerto 443."}
+{"timestamp": "2025-09-30 23:43:32", "level": "INFO", "message": "Usando archivo de dominios: config/domains.txt"}
+{"timestamp": "2025-09-30 23:43:32", "level": "INFO", "message": "Usando servidor DNS: 8.8.8.8"}
+{"timestamp": "2025-09-30 23:43:32", "level": "INFO", "message": "Procesando dominio: google.com"}
+{"timestamp": "2025-09-30 23:43:33", "level": "INFO", "message": "Resolución A para google.com exitosa en intento 1."}
+{"timestamp": "2025-09-30 23:43:33", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.101 en el puerto 80."}
+{"timestamp": "2025-09-30 23:43:33", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.101 en el puerto 443."}
+{"timestamp": "2025-09-30 23:43:33", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.113 en el puerto 80."}
+{"timestamp": "2025-09-30 23:43:33", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.113 en el puerto 443."}
+{"timestamp": "2025-09-30 23:43:33", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.139 en el puerto 80."}
+{"timestamp": "2025-09-30 23:43:33", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.139 en el puerto 443."}
+{"timestamp": "2025-09-30 23:43:33", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.100 en el puerto 80."}
+{"timestamp": "2025-09-30 23:43:33", "level": "INFO", "message": "Conectividad exitosa con 142.251.0.100 en el puerto 443."}
 ```
 ## 4. Decisiones Técnicas
 Se decidió enviar los logs a `stderr` para mantener los archivos de datos (`stdout`) completamente limpios y puros, facilitando su procesamiento por otras herramientas.
