@@ -1,0 +1,4 @@
+spotify.com
+reddit.com
+amazon.com
+microsoft.com
