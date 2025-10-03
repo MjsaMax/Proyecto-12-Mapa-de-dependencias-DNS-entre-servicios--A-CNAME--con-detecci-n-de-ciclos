@@ -1,0 +1,15 @@
+www.microsoft.com www.microsoft.com-c-3.edgekey.net
+www.microsoft.com-c-3.edgekey.net www.microsoft.com-c-3.edgekey.net.globalredir.akadns.net
+www.microsoft.com-c-3.edgekey.net.globalredir.akadns.net e13678.dscb.akamaiedge.net
+e13678.dscb.akamaiedge.net 23.57.122.86
+www.amazon.com tp.47cf2c8c9-frontier.amazon.com
+tp.47cf2c8c9-frontier.amazon.com d3ag4hukkh62yn.cloudfront.net
+d3ag4hukkh62yn.cloudfront.net 108.158.105.160
+blog.hubspot.com 172.64.154.108
+blog.hubspot.com 104.18.33.148
+google.com 142.251.0.138
+google.com 142.251.0.102
+google.com 142.251.0.139
+google.com 142.251.0.101
+google.com 142.251.0.100
+google.com 142.251.0.113

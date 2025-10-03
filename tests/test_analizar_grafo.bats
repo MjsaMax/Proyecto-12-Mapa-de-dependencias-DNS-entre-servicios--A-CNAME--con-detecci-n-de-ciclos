@@ -100,7 +100,7 @@ google.com
 github.com
 EOF
     
-    run bash -c "cd '${BATS_TMPDIR}' && timeout 20 ./src/resolve.sh 2>/dev/null"
+    run bash -c "cd '${BATS_TMPDIR}' && timeout 20 ./src/resolve.sh > out/dns-resolved.json 2>/dev/null"
     
     [ "$status" -eq 0 ]
     [ -f "${BATS_TMPDIR}/out/dns-resolved.json" ]

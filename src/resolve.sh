@@ -1,105 +1,89 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# --- Función de Logging Estructurado ---
-# Tarea: Logs estructurados con timestamp/level.
 log() {
-  local level="$1"
-  local message="$2"
-echo "{\"timestamp\": \"$(date +'%Y-%m-%d %H:%M:%S')\", \"level\": \"${level}\", \"message\": \"${message}\"}" >&2
+    local level="$1"
+    local message="$2"
+    echo "{\"timestamp\": \"$(date +'%Y-%m-%d %H:%M:%S')\", \"level\": \"${level}\", \"message\": \"${message}\"}" >&2
 }
 
-# --- Función de Limpieza para trap ---
-# Tarea: trap para SIGINT/SIGTERM.
 cleanup() {
-  log "INFO" "Interrupción recibida, terminando de forma ordenada."
-  exit 0
+    log "INFO" "Interrupción recibida, terminando de forma ordenada."
+    exit 0
 }
 trap cleanup SIGINT SIGTERM
 
-# --- Variables de Entorno ---
-log "INFO" "Usando archivo de dominios: ${DOMAINS_FILE}"
-log "INFO" "Usando servidor DNS: ${DNS_SERVER}"
-
-# --- Función de Verificación de Conectividad ---
-# Tarea: Verificar conectividad final con ss o nc -zv.
 check_connectivity() {
-  local ip="$1"
-  local ports=("80" "443") # Puertos comunes a verificar (HTTP, HTTPS)
+    local ip="$1"
+    local ports=("80" "443")
 
-  for port in "${ports[@]}"; do
-    # Usamos nc con timeout de 2 segundos (-w 2)
-    if nc -zv -w 2 "$ip" "$port" &>/dev/null; then
-      log "INFO" "Conectividad exitosa con ${ip} en el puerto ${port}."
-    else
-      log "WARN" "No se pudo establecer conexión con ${ip} en el puerto ${port}."
-    fi
-  done
+    for port in "${ports[@]}"; do
+        if nc -zv -w 2 "$ip" "$port" &>/dev/null; then
+            log "INFO" "Conectividad exitosa con ${ip} en el puerto ${port}."
+        else
+            log "WARN" "No se pudo establecer conexión con ${ip} en el puerto ${port}."
+        fi
+    done
 }
 
-# --- Función Principal ---
-# --- Función Principal (CORREGIDA)---
-resolve_domains() {
-  while IFS= read -r domain || [[ -n "$domain" ]]; do
-    domain=$(echo "$domain" | tr -d '\r')
-    if [[ -z "$domain" ]]; then continue; fi
-
-    log "INFO" "Procesando dominio: ${domain}" >&2
-
-    # --- BÚSQUEDA DE REGISTROS A ---
-    local max_retries=3
-    local dig_output_A=""
-    for i in $(seq 1 "$max_retries"); do
-      dig_output_A=$(dig @"${DNS_SERVER}" +time=3 +tries=1 +noall +answer "$domain" A || true)
-      if [[ -n "$dig_output_A" ]]; then
-        log "INFO" "Resolución A para ${domain} exitosa en intento ${i}." >&2
-        break
-      else
-        log "WARN" "Intento ${i}/${max_retries} (A) falló para ${domain}." >&2
-        sleep 1
-      fi
-    done
-
-    # Si la búsqueda de A fue exitosa, procesamos los resultados
-    if [[ -n "$dig_output_A" ]]; then
-      while read -r line; do
-          local ip=$(echo "$line" | awk '{print $5}')
-          local ttl=$(echo "$line" | awk '{print $2}')
-          # La salida de datos JSON va a stdout (sin >&2)
-          echo "{\"domain\": \"${domain}\", \"type\": \"A\", \"value\": \"${ip}\", \"ttl\": \"${ttl}\"}"
-          check_connectivity "$ip"
-      done <<< "$dig_output_A"
-    else
-      log "ERROR" "No se pudo resolver registro A para ${domain} después de ${max_retries} intentos." >&2
-    fi
-
-    # --- BÚSQUEDA DE REGISTROS CNAME (PROCESO SEPARADO) ---
-    local dig_output_cname=""
-    for i in $(seq 1 "$max_retries"); do
-      dig_output_cname=$(dig @"${DNS_SERVER}" +time=3 +tries=1 +noall +answer "$domain" CNAME || true)
-      if [[ -n "$dig_output_cname" ]]; then
-        log "INFO" "Resolución CNAME para ${domain} exitosa en intento ${i}." >&2
-        break
-      fi
-    done
+# --- FUNCIÓN RECURSIVA para resolver un dominio hasta el final ---
+resolve_recursive() {
+    local domain_to_check="$1"
     
-    # Si la búsqueda de CNAME fue exitosa, la procesamos
-    if [[ -n "$dig_output_cname" ]]; then
-        while read -r line; do
-            local cname_val=$(echo "$line" | awk '{print $5}')
-            local ttl=$(echo "$line" | awk '{print $2}')
-            echo "{\"domain\": \"${domain}\", \"type\": \"CNAME\", \"value\": \"${cname_val}\", \"ttl\": \"${ttl}\"}"
-        done <<< "$dig_output_cname"
+    local cname_output
+    cname_output=$(dig @"${DNS_SERVER:-8.8.8.8}" +noall +answer "$domain_to_check" CNAME)
+
+    if [[ -n "$cname_output" ]]; then
+        local next_domain=$(echo "$cname_output" | awk '{print $5}')
+        next_domain=${next_domain%.} 
+        local ttl=$(echo "$cname_output" | awk '{print $2}')
+        
+        log "INFO" "CNAME encontrado para ${domain_to_check}: ${next_domain}"
+        
+        echo "{\"domain\": \"${domain_to_check}\", \"type\": \"CNAME\", \"value\": \"${next_domain}\", \"ttl\": \"${ttl}\"}"
+        
+        resolve_recursive "$next_domain"
+        return
     fi
 
-  done < "${DOMAINS_FILE}"
+    local a_output
+    a_output=$(dig @"${DNS_SERVER:-8.8.8.8}" +noall +answer "$domain_to_check" A)
+    if [[ -n "$a_output" ]]; then
+        log "INFO" "Registro A encontrado para ${domain_to_check}"
+        
+        while read -r line; do
+            if [[ -z "$line" ]]; then continue; fi
+            
+            local ip=$(echo "$line" | awk '{print $5}')
+            local ttl=$(echo "$line" | awk '{print $2}')
+            
+            echo "{\"domain\": \"${domain_to_check}\", \"type\": \"A\", \"value\": \"${ip}\", \"ttl\": \"${ttl}\"}"
+            
+            check_connectivity "$ip"
+        done <<< "$a_output"
+        return
+    fi
+
+    log "ERROR" "No se encontraron registros A o CNAME para ${domain_to_check}"
+}
+
+# --- FUNCIÓN PRINCIPAL ---
+main() {
+    log "INFO" "Iniciando resolución recursiva de dominios..."
+    log "INFO" "Usando archivo de dominios: ${DOMAINS_FILE}"
+    log "INFO" "Usando servidor DNS: ${DNS_SERVER:-8.8.8.8}"
+
+    while IFS= read -r domain || [[ -n "$domain" ]]; do
+        if [[ -z "$domain" ]]; then continue; fi
+        log "INFO" "--- Procesando dominio original: ${domain} ---"
+        resolve_recursive "$domain"
+    done < "${DOMAINS_FILE}"
+
+    log "INFO" "Proceso de resolución completado."
 }
 
 # --- Ejecución ---
+: "${DOMAINS_FILE:?La variable de entorno DOMAINS_FILE debe estar definida}"
+: "${DNS_SERVER:=8.8.8.8}"
 mkdir -p out
-
-# Los logs (INFO, WARN, ERROR) van a la terminal/stderr y a un archivo de log.
-# La salida de datos (JSON) va a stdout y se redirige al archivo de resultados.
-resolve_domains | tee out/dns-resolved.json
-#echo "Proceso completado. Resultados en out/dns-resolved.csv"
-
+main
