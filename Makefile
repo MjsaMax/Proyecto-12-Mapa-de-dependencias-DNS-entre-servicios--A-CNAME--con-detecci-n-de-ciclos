@@ -1,8 +1,15 @@
 # Makefile inicial
-.PHONY: help tools build test run
+.PHONY: help tools build test run package dist-clean
 #VARIABLES
 TOOLS = dig curl ss nc bats
 INSTALA = sudo apt-get install -y
+
+DOMAINS_FILE ?= config/domains.txt
+DNS_SERVER   ?= 8.8.8.8
+DIST_DIR     = dist
+PKG_NAME     = proyecto
+PKG_VERSION  = 1.0.0
+PKG_FILE     = $(DIST_DIR)/$(PKG_NAME)-$(PKG_VERSION).tar.gz
 
 help: ## Mostrar los targets disponibles
 	@echo "Make targets:"
@@ -34,10 +41,10 @@ test: ## Ejecutar pruebas
 
 run: ## Ejecutar la aplicación
 	@echo "Ejecutando la aplicación..."
-	@export DOMAINS_FILE="config/domains.txt"
-	@export DNS_SERVER="8.8.8.8"
-	@./src/resolve.sh
-	@./src/analizar-grafo.sh
+	@echo "  DOMAINS_FILE=$(DOMAINS_FILE)"
+	@echo "  DNS_SERVER=$(DNS_SERVER)"
+	@DOMAINS_FILE="$(DOMAINS_FILE)" DNS_SERVER="$(DNS_SERVER)" ./src/resolve.sh
+	@DOMAINS_FILE="$(DOMAINS_FILE)" DNS_SERVER="$(DNS_SERVER)" ./src/analizar-grafo.sh
 	
 
 clean: ## Limpiar archivos
@@ -46,3 +53,19 @@ clean: ## Limpiar archivos
 	@rm out/edge-list.txt
 	@rm out/preview.grafo.dot
 	
+package: $(PKG_FILE) ## Crear paquete reproducible en dist/
+
+$(PKG_FILE): build | $(DIST_DIR)
+	@echo "Creando paquete reproducible: $@"
+	@tar --sort=name \
+	     --owner=0 --group=0 --numeric-owner \
+	     --mtime="UTC 2020-01-01" \
+	     -czf $@ \
+	     config src tests README.md Makefile
+
+$(DIST_DIR):
+	mkdir -p $(DIST_DIR)
+
+dist-clean: ## Limpiar paquetes en dist/
+	@echo "Limpiando dist/"
+	@rm -rf $(DIST_DIR)
