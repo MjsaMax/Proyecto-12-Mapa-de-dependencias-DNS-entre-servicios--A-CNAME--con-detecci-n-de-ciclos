@@ -1,0 +1,15 @@
+{"domain": "www.microsoft.com", "type": "CNAME", "value": "www.microsoft.com-c-3.edgekey.net", "ttl": "1639"}
+{"domain": "www.microsoft.com-c-3.edgekey.net", "type": "CNAME", "value": "www.microsoft.com-c-3.edgekey.net.globalredir.akadns.net", "ttl": "336"}
+{"domain": "www.microsoft.com-c-3.edgekey.net.globalredir.akadns.net", "type": "CNAME", "value": "e13678.dscb.akamaiedge.net", "ttl": "900"}
+{"domain": "e13678.dscb.akamaiedge.net", "type": "A", "value": "23.57.122.86", "ttl": "20"}
+{"domain": "www.amazon.com", "type": "CNAME", "value": "tp.47cf2c8c9-frontier.amazon.com", "ttl": "730"}
+{"domain": "tp.47cf2c8c9-frontier.amazon.com", "type": "CNAME", "value": "d3ag4hukkh62yn.cloudfront.net", "ttl": "60"}
+{"domain": "d3ag4hukkh62yn.cloudfront.net", "type": "A", "value": "108.158.105.160", "ttl": "60"}
+{"domain": "blog.hubspot.com", "type": "A", "value": "172.64.154.108", "ttl": "300"}
+{"domain": "blog.hubspot.com", "type": "A", "value": "104.18.33.148", "ttl": "300"}
+{"domain": "google.com", "type": "A", "value": "142.251.0.138", "ttl": "185"}
+{"domain": "google.com", "type": "A", "value": "142.251.0.102", "ttl": "185"}
+{"domain": "google.com", "type": "A", "value": "142.251.0.139", "ttl": "185"}
+{"domain": "google.com", "type": "A", "value": "142.251.0.101", "ttl": "185"}
+{"domain": "google.com", "type": "A", "value": "142.251.0.100", "ttl": "185"}
+{"domain": "google.com", "type": "A", "value": "142.251.0.113", "ttl": "185"}
