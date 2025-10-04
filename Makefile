@@ -43,7 +43,7 @@ run: ## Ejecutar la aplicación
 	@echo "Ejecutando la aplicación..."
 	@echo "  DOMAINS_FILE=$(DOMAINS_FILE)"
 	@echo "  DNS_SERVER=$(DNS_SERVER)"
-	@DOMAINS_FILE="$(DOMAINS_FILE)" DNS_SERVER="$(DNS_SERVER)" ./src/resolve.sh
+	@DOMAINS_FILE="$(DOMAINS_FILE)" DNS_SERVER="$(DNS_SERVER)" ./src/resolve.sh > out/dns-resolved.json 2> out/sprint2.log
 	@DOMAINS_FILE="$(DOMAINS_FILE)" DNS_SERVER="$(DNS_SERVER)" ./src/analizar-grafo.sh
 	
 
