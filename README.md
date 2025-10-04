@@ -3,7 +3,7 @@
 Este proyecto construye un grafo de dependencias entre dominios a partir de registros DNS tipo **A** y **CNAME**, y detecta ciclos en la resolución.  
 Permite visualizar cómo un servicio depende de otros a nivel DNS y verificar si existen bucles que puedan afectar la disponibilidad.
 
-
+INTEGRANTES: SERRANO MAX, DAVILA AARON, POMA WALTER
 ---
 
 ## Estructura
